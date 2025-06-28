@@ -21,7 +21,7 @@ export const loginUser = async (req, res) => {
         const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(401).json({
-                status: 'failed',
+                success: true,
                 message: 'User does not exist',
             });
         }
@@ -29,7 +29,7 @@ export const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({
-                status: 'failed',
+                success: false,
                 message: 'Invalid credentials',
             });
         }
@@ -95,7 +95,7 @@ export const registerUser = async (req, res) => {
         const token = createToken(user._id);
 
         res.status(201).json({
-            status: 'success',
+            success: true,
             message: 'User registered successfully',
             data: {
                 user: {
@@ -109,32 +109,62 @@ export const registerUser = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({
-            status: 'failed',
+            success: false,
             message: err.message,
         });
     }
 };
 
+// export const adminLogin = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+
+//         if (email === process.env.ADMIN_EMAIL || password === process.env.ADMIN_PASSWORD) {
+//             const token  = jwt.sign(email + password, process.env.JWT_SECRET);
+//             res.status(200).json({
+//                 success: true,
+//                 message: 'Admin logged in successfully',
+//                 data: {
+//                     token,
+//                 },
+//             });
+//         } else {
+//             res.status(401).json({
+//                 success: false,
+//                 message: 'Invalid credentials',
+//             });
+//         }
+
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({
+//             status: 'failed',
+//             message: err.message,
+//         });
+//     }
+// };
+
 export const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        if (email === process.env.ADMIN_EMAIL || password === process.env.ADMIN_PASSWORD) {
-            const token  = jwt.sign(email + password, process.env.JWT_SECRET);
+        if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+            const token  = jwt.sign(
+                { email: process.env.ADMIN_EMAIL, role: "admin" },
+                process.env.JWT_SECRET,
+                { expiresIn: "1d" }
+            );
             res.status(200).json({
-                status: 'success',
+                success: true,
                 message: 'Admin logged in successfully',
-                data: {
-                    token,
-                },
+                token, // <-- send token directly, not inside data object
             });
         } else {
             res.status(401).json({
-                status: 'failed',
+                success: false,
                 message: 'Invalid credentials',
             });
         }
-
     } catch (err) {
         console.error(err);
         res.status(500).json({
