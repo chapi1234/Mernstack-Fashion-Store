@@ -9,10 +9,6 @@ export const addProduct = async (req, res) => {
 
         console.log(req.files);
 
-        // const image1 = req.files?.image1?.[0] || null;
-        // const image2 = req.files?.image2?.[0] || null;
-        // const image3 = req.files?.image3?.[0] || null;
-        // const image4 = req.files?.image4?.[0] || null;
         
         const image1 = req.files.image1 && req.files.image1[0]
         const image2 = req.files.image2 && req.files.image2[0]
@@ -47,7 +43,7 @@ export const addProduct = async (req, res) => {
         const product = await productData.save();
 
         res.status(201).json({
-            status: 'success',
+            success: true,
             message: 'Product added successfully',
             data: product
         })
@@ -55,7 +51,7 @@ export const addProduct = async (req, res) => {
      } catch(err) {
         console.log(err);
         res.status(500).json({
-            status: 'failed',
+            success: false, 
             message: err.message
         });
      }
@@ -65,14 +61,14 @@ export const listProducts = async (req, res) => {
     try {
         const products = await ProductModel.find({}).sort({ date: -1 });
         res.status(200).json({
-            status: 'success',
+            success: true,
             message: 'Products fetched successfully',
-            data: products
+            products
         })
     } catch(err) {
         console.log(err);
         res.status(500).json({
-            status: 'failed',
+            success: false,
             message: err.message
         });
     }
@@ -81,22 +77,22 @@ export const listProducts = async (req, res) => {
 
 export const removeProduct = async (req, res) => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
         const product = await ProductModel.findByIdAndDelete(id);
         if (!product) {
             return res.status(404).json({
-                status: 'failed',
+                success:false,
                 message: 'Product not found'
             });
         }
         res.status(200).json({
-            status: 'success',
+            success: true,
             message: 'Product removed successfully'
         })
     } catch(err) {
         console.log(err);
         res.status(500).json({
-            status: 'failed',
+            success: false,
             message: err.message
         });
     }
@@ -110,19 +106,19 @@ export const singleProduct = async (req, res) => {
         const product = await ProductModel.findById(productId);
         if (!product) {
             return res.status(404).json({
-                status: 'failed',
+                success: false,
                 message: 'Product not found'
             });
         }
         res.status(200).json({
-            status: 'success',
+            success: true,
             message: 'Product fetched successfully',
             data: product
         })
     } catch (err) {
         console.log(err);
         res.status(500).json({
-            status: 'failed',
+            success: false,
             message: err.message
         });
     }
