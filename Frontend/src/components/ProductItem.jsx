@@ -1,20 +1,29 @@
-import React, { useContext } from 'react'
-import { ShopContext } from '../context/shopContext'; // Adjust the path as needed
-import { Link } from 'react-router-dom';
+import React, { useContext } from "react";
+import { ShopContext } from "../context/ShopContext";
+import { Link } from "react-router-dom";
 
-const ProductItem = ({id, image, name, price}) => {
-    const {currency} = useContext(ShopContext);
+const ProductItem = ({ id, image, name, price }) => {
+  const { currency } = useContext(ShopContext);
+
   return (
-    <Link className='text-gray-700 cursor-pointer' to={`/product/${id}`}>
-        <div
-        //  className='overflow-hidden'
-        >
-            <img className='hover:scale-110 transition ease-in-out rounded-2xl' src={image[0]} alt="" />
-        </div>
-        <p className='pt-3 pb-1 text-sm'>{name}</p>
-        <p className='text-sm font-medium'>{currency}{price}</p>
+    <Link className="text-gray-700 cursor-pointer" to={`/product/${id}`}>
+      <div className="overflow-hidden">
+        <img
+          className="transition ease-in-out hover:scale-110"
+          src={image[0]}
+          alt="Product"
+        />
+      </div>
+      <p className="pt-3 pb-1 text-sm">{name}</p>
+      <p className="text-sm font-medium">
+        {currency}&nbsp;
+        {price.toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </p>
     </Link>
-  )
-}
+  );
+};
 
-export default ProductItem
+export default ProductItem;
